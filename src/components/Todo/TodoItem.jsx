@@ -2,9 +2,9 @@ import { memo, useContext, useEffect, useState } from "react";
 import { TodoDispatchContext } from "../../pages/Todo";
 
 const TodoItem = ({ todo: item }) => {
-  useEffect(() => {
-    console.log(`useEffect:: TodoItem : ${item.todo}`);
-  });
+  // useEffect(() => {
+  //   console.log(`useEffect:: TodoItem : ${item.todo}`);
+  // });
 
   const { update, remove } = useContext(TodoDispatchContext);
 

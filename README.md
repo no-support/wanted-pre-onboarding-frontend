@@ -1,5 +1,7 @@
 # 특징
 
+- 배포 url: no-support-wanted-pre-onboarding-frontend.web.app
+- 요구된 모든 기능 구현 완료
 - useInput 커스텀 훅 사용
 - baseUrl: axios의 기본 설정으로 중복 최소화
 - /todo 페이지 요청 후 바로 이탈 시 조회 데이터 요청 취소

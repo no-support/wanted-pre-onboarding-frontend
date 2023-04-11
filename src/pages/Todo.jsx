@@ -36,9 +36,9 @@ const Todo = () => {
   const navigate = useNavigate();
   const [todos, dispatch] = useReducer(reducer);
 
-  useEffect(() => {
-    console.log(`useEffect:: Todo : `);
-  });
+  // useEffect(() => {
+  //   console.log(`useEffect:: Todo : `);
+  // });
   // 질문: dependencie 배열에 navigate를 넣으라는 권고가 뜨는데, 왜 넣어야 하는지 모르겠습니다.
   useEffect(() => {
     if (!hasToken()) {

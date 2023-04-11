@@ -1,6 +1,6 @@
 # 특징
 
-- 배포 url: no-support-wanted-pre-onboarding-frontend.web.app
+- 배포 url: https://no-support-wanted-pre-onboarding-frontend.web.app
 - 요구된 모든 기능 구현 완료
 - useInput 커스텀 훅 사용
 - baseUrl: axios의 기본 설정으로 중복 최소화

@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import TodoItem from "./TodoItem";
+import { TodoStateContext } from "../../pages/Todo";
 
-const TodoList = ({ todos, update }) => {
+const TodoList = () => {
+  const todos = useContext(TodoStateContext);
   useEffect(() => {
     console.log(`useEffect:: TodoList : `);
   });
@@ -9,10 +11,7 @@ const TodoList = ({ todos, update }) => {
     <div className="TodoList">
       {todos === undefined && <div>로딩 중</div>}
       <ul>
-        {todos &&
-          todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} update={update} />
-          ))}
+        {todos && todos.map((todo) => <TodoItem key={todo.id} todo={todo} />)}
       </ul>
     </div>
   );

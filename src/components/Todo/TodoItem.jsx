@@ -1,10 +1,13 @@
 import { deleteTodo } from "../../apis/todo";
-import { useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
+import { TodoDispatchContext } from "../../pages/Todo";
 
-const TodoItem = ({ todo: item, update }) => {
+const TodoItem = ({ todo: item }) => {
   useEffect(() => {
     console.log(`useEffect:: TodoItem : ${item.todo}`);
   });
+
+  const { update } = useContext(TodoDispatchContext);
 
   const { id, todo, isCompleted, userId } = item;
 
@@ -81,4 +84,4 @@ const TodoItem = ({ todo: item, update }) => {
     </li>
   );
 };
-export default TodoItem;
+export default memo(TodoItem);

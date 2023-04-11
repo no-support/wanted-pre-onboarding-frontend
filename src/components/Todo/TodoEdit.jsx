@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useInput } from "../../hooks";
+import { TodoDispatchContext } from "../../pages/Todo";
 
-const TodoEdit = ({ create }) => {
+const TodoEdit = () => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const { create } = useContext(TodoDispatchContext);
 
   useEffect(() => {
     console.log(`useEffect:: TodoEdit : `);

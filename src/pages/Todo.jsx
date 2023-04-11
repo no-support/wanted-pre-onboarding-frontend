@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createTodo, getTodos, updateTodo } from "../apis/todo";
+import { createTodo, deleteTodo, getTodos, updateTodo } from "../apis/todo";
 import {
   createContext,
   useCallback,
@@ -17,6 +17,7 @@ const reducer = (state, action) => {
     case "INIT":
     case "CREATE":
     case "UPDATE":
+    case "REMOVE":
       return action.data;
     default:
       return state;
@@ -83,9 +84,20 @@ const Todo = () => {
     }
   }, []);
 
-  const memoizedDispatches = useMemo(() => {
-    return { create, update };
+  const remove = useCallback(async (id) => {
+    try {
+      await deleteTodo(id);
+      const todos = await getTodos();
+      dispatch({ type: "REMOVE", data: todos.data });
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
+
+  const memoizedDispatches = useMemo(() => {
+    return { create, update, remove };
+  }, []);
+
   return (
     <TodoStateContext.Provider value={todos}>
       <TodoDispatchContext.Provider value={memoizedDispatches}>

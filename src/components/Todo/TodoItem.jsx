@@ -7,7 +7,7 @@ const TodoItem = ({ todo: item }) => {
     console.log(`useEffect:: TodoItem : ${item.todo}`);
   });
 
-  const { update } = useContext(TodoDispatchContext);
+  const { update, remove } = useContext(TodoDispatchContext);
 
   const { id, todo, isCompleted, userId } = item;
 
@@ -35,16 +35,24 @@ const TodoItem = ({ todo: item }) => {
 
   const handleDelete = async () => {
     try {
-      await deleteTodo(id);
+      await remove(id);
       setIsDeleted(true);
     } catch (err) {
       console.log(err);
     }
   };
+  // const handleDelete = async () => {
+  //   try {
+  //     await deleteTodo(id);
+  //     setIsDeleted(true);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
-  if (isDeleted) {
-    return null;
-  }
+  // if (isDeleted) {
+  //   return null;
+  // }
 
   return (
     <li className="TodoItem">

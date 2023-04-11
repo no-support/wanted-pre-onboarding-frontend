@@ -14,11 +14,16 @@ import TodoList from "../components/Todo/TodoList";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "INIT":
-    case "CREATE":
-    case "UPDATE":
-    case "REMOVE":
+    case "READ":
       return action.data;
+    case "CREATE":
+      return [...state, action.data];
+    case "UPDATE":
+      return state.map((todo) =>
+        todo.id === action.data.id ? action.data : todo
+      );
+    case "REMOVE":
+      return state.filter((todo) => todo.id !== action.data.id);
     default:
       return state;
   }
@@ -29,9 +34,11 @@ export const TodoDispatchContext = createContext();
 
 const Todo = () => {
   const navigate = useNavigate();
-  // const [todos, setTodos] = useState();
   const [todos, dispatch] = useReducer(reducer);
 
+  useEffect(() => {
+    console.log(`useEffect:: Todo : `);
+  });
   // 질문: dependencie 배열에 navigate를 넣으라는 권고가 뜨는데, 왜 넣어야 하는지 모르겠습니다.
   useEffect(() => {
     if (!hasToken()) {
@@ -42,8 +49,7 @@ const Todo = () => {
     const fetchData = async () => {
       try {
         const res = await getTodos(cancelToken);
-        dispatch({ type: "INIT", data: res.data });
-        // setTodos(res.data);
+        dispatch({ type: "READ", data: res.data });
       } catch (err) {
         if (axios.isCancel(err)) {
           const { code, message, name } = err;
@@ -60,14 +66,12 @@ const Todo = () => {
     };
   }, []);
 
-  // 질문: 왜 useCallback을 썼는데도 초기 렌더링 시 TodoEdit이 두 번 호출되며,
-  // 수정 시(체크박스 선택 혹은 수정 작성 후 제출)에도 한 번 호출되는지 모르겠습니다.
+  // 질문: 왜 useCallback과 useMemo를 썼는데도 초기 렌더링 시 TodoEdit이 두 번 호출되며,
+  // 수정 시(체크박스 선택 혹은 수정 작성 후 제출), 삭제 시에도 한 번 호출되는지 모르겠습니다.
   const create = useCallback(async (inputValue) => {
     try {
-      await createTodo(inputValue);
-      const todos = await getTodos();
-      dispatch({ type: "CREATE", data: todos.data });
-      // setTodos(todos.data);
+      const res = await createTodo(inputValue);
+      dispatch({ type: "CREATE", data: res.data });
     } catch (err) {
       console.log(err);
     }
@@ -75,10 +79,8 @@ const Todo = () => {
 
   const update = useCallback(async (todo) => {
     try {
-      await updateTodo(todo);
-      const todos = await getTodos();
-      dispatch({ type: "UPDATE", data: todos.data });
-      // setTodos(todos.data);
+      const res = await updateTodo(todo);
+      dispatch({ type: "UPDATE", data: res.data });
     } catch (err) {
       console.log(err);
     }
@@ -87,8 +89,7 @@ const Todo = () => {
   const remove = useCallback(async (id) => {
     try {
       await deleteTodo(id);
-      const todos = await getTodos();
-      dispatch({ type: "REMOVE", data: todos.data });
+      dispatch({ type: "REMOVE", data: id });
     } catch (err) {
       console.log(err);
     }

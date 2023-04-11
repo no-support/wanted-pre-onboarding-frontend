@@ -1,4 +1,3 @@
-import { deleteTodo } from "../../apis/todo";
 import { memo, useContext, useEffect, useState } from "react";
 import { TodoDispatchContext } from "../../pages/Todo";
 
@@ -41,18 +40,13 @@ const TodoItem = ({ todo: item }) => {
       console.log(err);
     }
   };
-  // const handleDelete = async () => {
-  //   try {
-  //     await deleteTodo(id);
-  //     setIsDeleted(true);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
-  // if (isDeleted) {
-  //   return null;
-  // }
+  // 질문: handleDelete에서 remove를 성공하면 알아서 상태가 변경되어서
+  // TodoList에서 해당 아이템이 사라지는데, 왜 여기서
+  // isDeleted를 true로 바꿔줘야 새로고침을 하지 않고 화면상에서 사라지는지 모르겠습니다.
+  if (isDeleted) {
+    return null;
+  }
 
   return (
     <li className="TodoItem">

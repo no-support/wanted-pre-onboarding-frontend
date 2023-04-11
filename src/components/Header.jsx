@@ -2,15 +2,22 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <div className="Header">
-      <Link to={"/"}>HOME</Link>
-      <br />
-      <Link to={"/signup"}>signup</Link>
-      <br />
-      <Link to={"/signin"}>signin</Link>
-      <br />
-      <Link to={"/todo"}>todo</Link>
-    </div>
+    <header className="Header">
+      <ul>
+        <li>
+          <Link to={"/"}>HOME</Link>
+        </li>
+        <li>
+          <Link to={"/signup"}>signup</Link>
+        </li>
+        <li>
+          <Link to={"/signin"}>signin</Link>
+        </li>
+        <li>
+          <Link to={"/todo"}>todo</Link>
+        </li>
+      </ul>
+    </header>
   );
 };
 export default Header;

@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { signup, signin } from "../apis/auth";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInput } from "../hooks/index";
 import { hasToken, isValidEmail, isValidPassword } from "../utils";
@@ -11,111 +11,90 @@ const Form = ({ testId }) => {
     hasToken() && navigate("/todo");
   }, []);
 
-  const { inputValue: email, handleChange: handleEmailChange } = useInput("");
-  const { inputValue: password, handleChange: handlePasswordChange } =
-    useInput("");
-
-  const [hasSubmit, setHasSubmit] = useState(false);
-
-  useEffect(() => {
-    if (!hasSubmit) return;
-    const cancelToken = axios.CancelToken.source();
-
-    if (testId === "signin-button") {
-      signIn(cancelToken);
-    } else if (testId === "signup-button") {
-      signUp(cancelToken);
-    }
-
-    return () => {
-      cancelToken.cancel();
-    };
-  }, [hasSubmit, testId]);
-
-  const signIn = (cancelToken) => {
-    axios
-      .post(
-        process.env.REACT_APP_API_URL + "/" + "auth/signin",
-        {
-          email,
-          password,
-        },
-        { cancelToken: cancelToken.token }
-      )
-      .then((res) => {
+  const submitAction = async (inputValue) => {
+    try {
+      if (testId === "signin") {
+        const res = await signin(inputValue);
         localStorage.setItem("access_token", res.data.access_token);
         navigate("/todo");
-      })
-      .catch((err) => {
-        if (axios.isCancel(err)) {
-          const { code, message, name } = err;
-          console.log(message);
-          return;
-        }
-        const { error, message, statusCode } = err.response.data;
-        console.log(error, message, statusCode);
-        alert(message);
-      });
-  };
-
-  const signUp = (cancelToken) => {
-    axios
-      .post(
-        process.env.REACT_APP_API_URL + "/" + "auth/signup",
-        {
-          email,
-          password,
-        },
-        { cancelToken: cancelToken.token }
-      )
-      .then((res) => {
-        console.log(res);
+      } else if (testId === "signup") {
+        await signup(inputValue);
         navigate("/signin");
-      })
-      .catch((err) => {
-        if (axios.isCancel(err)) {
-          const { code, message, name } = err;
-          console.log(message);
-          return;
-        }
-        const { error, message, statusCode } = err.response.data;
-        console.log(error, message, statusCode);
-        alert(message);
-      });
+      }
+    } catch (err) {
+      const { error, message, statusCode } = err.response.data;
+      alert(message);
+    }
   };
 
-  const handleSubmit = () => {
-    setHasSubmit(true);
-  };
+  const { inputValue, handleChange, handleSubmit } = useInput(
+    {
+      email: "",
+      password: "",
+    },
+    submitAction
+  );
+
+  const inputs = [
+    {
+      type: "text",
+      name: "email",
+      id: "email",
+      "data-testid": "email-input",
+      label: "이메일",
+      placeholder: "이메일을 입력하세요.",
+      errorMessage: "이메일 형태가 아닙니다.",
+    },
+    {
+      type: "password",
+      name: "password",
+      id: "password",
+      "data-testid": "password-input",
+      label: "비밀번호",
+      placeholder: "비밀번호를 입력하세요.",
+      errorMessage: "비밀번호는 8자 이상이어야 합니다.",
+    },
+  ];
 
   return (
     <div className="Form">
       <form>
-        <input
-          type="text"
-          name="email"
-          id="email"
-          data-testid="email-input"
-          value={email}
-          onChange={handleEmailChange}
-        />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          data-testid="password-input"
-          value={password}
-          onChange={handlePasswordChange}
-        />
+        {inputs.map((input) => {
+          const {
+            type,
+            name,
+            id,
+            "data-testid": dataTestId,
+            label,
+            placeholder,
+            errorMessage,
+          } = input;
+          return (
+            <div key={name}>
+              <label htmlFor={id}>{label}</label>
+              <input
+                type={type}
+                name={name}
+                id={id}
+                data-testid={dataTestId}
+                placeholder={placeholder}
+                value={inputValue[name]}
+                onChange={handleChange}
+              />
+            </div>
+          );
+        })}
         <button
           disabled={
-            isValidEmail(email) && isValidPassword(password) ? false : true
+            isValidEmail(inputValue.email) &&
+            isValidPassword(inputValue.password)
+              ? false
+              : true
           }
-          type="button"
-          data-testid={testId}
+          data-testid={`${testId}-button`}
           onClick={handleSubmit}
         >
-          회원가입
+          {testId === "signin" ? "로그인" : "회원가입"}
         </button>
       </form>
     </div>

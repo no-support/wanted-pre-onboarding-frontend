@@ -23,7 +23,7 @@ const reducer = (state, action) => {
         todo.id === action.data.id ? action.data : todo
       );
     case "REMOVE":
-      return state.filter((todo) => todo.id !== action.data.id);
+      return state.filter((todo) => todo.id !== action.id);
     default:
       return state;
   }
@@ -36,10 +36,6 @@ const Todo = () => {
   const navigate = useNavigate();
   const [todos, dispatch] = useReducer(reducer);
 
-  // useEffect(() => {
-  //   console.log(`useEffect:: Todo : `);
-  // });
-  // 질문: dependencie 배열에 navigate를 넣으라는 권고가 뜨는데, 왜 넣어야 하는지 모르겠습니다.
   useEffect(() => {
     if (!hasToken()) {
       navigate("/signin");
@@ -52,22 +48,18 @@ const Todo = () => {
         dispatch({ type: "READ", data: res.data });
       } catch (err) {
         if (axios.isCancel(err)) {
-          const { code, message, name } = err;
-          console.log(message);
+          console.log(err.message); // canceled
           return;
         }
-        const { error, message, statusCode } = err.response.data;
-        alert(message); // canceled
+        alert(err.response.data.message);
       }
     };
     fetchData();
     return () => {
       cancelToken.cancel();
     };
-  }, []);
+  }, [navigate]);
 
-  // 질문: 왜 useCallback과 useMemo를 썼는데도 초기 렌더링 시 TodoEdit이 두 번 호출되며,
-  // 수정 시(체크박스 선택 혹은 수정 작성 후 제출), 삭제 시에도 한 번 호출되는지 모르겠습니다.
   const create = useCallback(async (inputValue) => {
     try {
       const res = await createTodo(inputValue);
@@ -89,7 +81,7 @@ const Todo = () => {
   const remove = useCallback(async (id) => {
     try {
       await deleteTodo(id);
-      dispatch({ type: "REMOVE", data: id });
+      dispatch({ type: "REMOVE", id });
     } catch (err) {
       console.log(err);
     }
@@ -97,6 +89,7 @@ const Todo = () => {
 
   const memoizedDispatches = useMemo(() => {
     return { create, update, remove };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

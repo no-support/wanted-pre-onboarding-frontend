@@ -1,15 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { memo, useContext, useState } from "react";
 import { useInput } from "../../hooks";
 import { TodoDispatchContext } from "../../pages/Todo";
 
 const TodoEdit = () => {
   const [isLoading, setIsLoading] = useState(false);
-
   const { create } = useContext(TodoDispatchContext);
-
-  // useEffect(() => {
-  //   console.log(`useEffect:: TodoEdit : `);
-  // });
 
   const submitAction = async () => {
     if (!isLoading) {
@@ -19,7 +14,7 @@ const TodoEdit = () => {
     }
   };
 
-  const { inputValue, updateValue, handleChange, handleSubmit } = useInput(
+  const { inputValue, handleChange, handleSubmit } = useInput(
     { todo: "" },
     submitAction
   );
@@ -45,4 +40,4 @@ const TodoEdit = () => {
     </div>
   );
 };
-export default TodoEdit;
+export default memo(TodoEdit);

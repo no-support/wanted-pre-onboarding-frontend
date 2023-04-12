@@ -11,7 +11,7 @@ const Todo = lazy(() => import("./pages/Todo"));
 function App() {
   return (
     <div className="App">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>로딩 중</div>}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
